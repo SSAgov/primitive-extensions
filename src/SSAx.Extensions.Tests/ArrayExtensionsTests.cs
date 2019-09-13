@@ -74,7 +74,7 @@ namespace SSAx.Extensions.Tests
             Assert.Contains(new string[] { "Hello", "are" }, subsets); // 7
             Assert.Contains(new string[] { "there,", "how" }, subsets); // 8
             Assert.Contains(new string[] { "there,", "are" }, subsets); // 9
-            Assert.Contains(new string[] { "how,", "are" }, subsets); // 10
+            Assert.Contains(new string[] { "how", "are" }, subsets); // 10
             Assert.Contains(new string[] { "Hello", "there,", "how" }, subsets); // 11
             Assert.Contains(new string[] { "Hello", "there,", "are" }, subsets); // 12
             Assert.Contains(new string[] { "Hello", "how", "are" }, subsets); // 13
