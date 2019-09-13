@@ -156,10 +156,10 @@ namespace SSAx.Extensions
         /// </summary>
         /// <param name="s"></param>
         /// <param name="t"></param>
-        /// <param name="trimSpaces"></param>
+        /// <param name="trimSpacesIfApplicable"></param>
         /// <param name="dateTimeIsDateWhenMidnight"></param>
         /// <returns></returns>
-        public static string EncodeAsSqlVariable(this object objectValue, bool trimSpaces = true, bool dateTimeIsDateWhenMidnight = true)
+        public static string EncodeAsSqlVariable(this object objectValue, bool trimSpacesIfApplicable = true, bool dateTimeIsDateWhenMidnight = true)
         {
             if (objectValue == null  || objectValue == DBNull.Value)
                 return "NULL";
@@ -167,24 +167,26 @@ namespace SSAx.Extensions
             string encodedString = objectValue.ToString();
             switch (Type.GetTypeCode(objectValue.GetType()))
             {
-                case TypeCode.String:
-                    if (trimSpaces) encodedString = encodedString.TrimEnd();
-                    encodedString = encodedString.Replace("'", "''");
-                    encodedString = string.Format("'{0}'", encodedString);
+                case TypeCode.Boolean:
+                    bool b = (bool)objectValue;
+                    return b ?"1":"0";
 
-                    break;
+                case TypeCode.String:
+                    if (trimSpacesIfApplicable) encodedString = encodedString.TrimEnd();
+                    encodedString = encodedString.Replace("'", "''");
+                    return string.Format("'{0}'", encodedString);
+
                 case TypeCode.DateTime:
 
                     DateTime dt = (DateTime)objectValue;
                     if (dt.TimeOfDay == new TimeSpan() & dateTimeIsDateWhenMidnight)
                     {
-                        encodedString = string.Format("'{0}'", dt.ToString("yyyy-MM-dd"));
+                        return string.Format("'{0}'", dt.ToString("yyyy-MM-dd"));
                     }
                     else
                     {
-                        encodedString = string.Format("'{0}'", dt.ToString("yyyy-MM-dd HH:mm:ss"));
+                        return string.Format("'{0}'", dt.ToString("yyyy-MM-dd HH:mm:ss"));
                     }
-                    break;
 
                 default:
                     break;
