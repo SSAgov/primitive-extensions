@@ -152,7 +152,7 @@ namespace SSAx.Extensions
 
 
         /// <summary>
-        ///  ??? 1
+        ///  
         /// </summary>
         /// <param name="s"></param>
         /// <param name="t"></param>
@@ -161,7 +161,7 @@ namespace SSAx.Extensions
         /// <returns></returns>
         public static string EncodeAsSqlVariable(this object objectValue, bool trimSpacesIfApplicable = true, bool dateTimeIsDateWhenMidnight = true)
         {
-            if (objectValue == null  || objectValue == DBNull.Value)
+            if (objectValue == null || objectValue == DBNull.Value)
                 return "NULL";
 
             string encodedString = objectValue.ToString();
@@ -169,7 +169,7 @@ namespace SSAx.Extensions
             {
                 case TypeCode.Boolean:
                     bool b = (bool)objectValue;
-                    return b ?"1":"0";
+                    return b ? "1" : "0";
 
                 case TypeCode.String:
                     if (trimSpacesIfApplicable) encodedString = encodedString.TrimEnd();
@@ -177,26 +177,16 @@ namespace SSAx.Extensions
                     return string.Format("'{0}'", encodedString);
 
                 case TypeCode.DateTime:
-
-                    DateTime dt = (DateTime)objectValue;
-                    if (dt.TimeOfDay == new TimeSpan() & dateTimeIsDateWhenMidnight)
-                    {
-                        return string.Format("'{0}'", dt.ToString("yyyy-MM-dd"));
-                    }
+                    DateTime dateTime = (DateTime)objectValue;
+                    if (dateTime.TimeOfDay == new TimeSpan() & dateTimeIsDateWhenMidnight)
+                        return dateTime.EncodeAsSqlVariable(DateTimeExtensions.DateTimePrecision.Day);
                     else
-                    {
-                        return string.Format("'{0}'", dt.ToString("yyyy-MM-dd HH:mm:ss"));
-                    }
+                        return dateTime.EncodeAsSqlVariable(DateTimeExtensions.DateTimePrecision.Second);
 
                 default:
                     break;
             }
             return encodedString;
         }
-
-
-
-
-
     }
 }
