@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SSAx.Extensions\SSAx.Extensions.csproj" />
+    <ProjectReference Include="..\SSAx.Extensions\SSAx.PrimitiveExtensions.csproj" />
   </ItemGroup>
 
 </Project>

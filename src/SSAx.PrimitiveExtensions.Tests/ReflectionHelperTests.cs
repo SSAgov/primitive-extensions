@@ -20,7 +20,7 @@ namespace SSAx.PrimitiveExtensions.Tests
         [Fact]
         public void GetThisFullyQualifiedMethodName_GivenThis_ExpectThisMethodName()
         {
-            Assert.Equal("SSAx.Extensions.Tests.ReflectionHelperTests.GetThisFullyQualifiedMethodName_GivenThis_ExpectThisMethodName", ReflectionHelper.GetThisFullyQualifiedMethodName());
+            Assert.Equal("SSAx.PrimitiveExtensions.Tests.ReflectionHelperTests.GetThisFullyQualifiedMethodName_GivenThis_ExpectThisMethodName", ReflectionHelper.GetThisFullyQualifiedMethodName());
         }
 
         [Fact]
