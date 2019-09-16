@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>SSAx.PrimitiveExtensions</PackageId>
-    <Authors>SSAx.PrimitiveExtensions</Authors>
+    <Authors>Joseph Amalfitano</Authors>
     <Company>Social Security Administration</Company>
     <Product>SSA Primitive Extensions</Product>
     <Description>A .NET Standard 2.0 library of extension methods for primitive types such as string, DateTime, boolean, el al. Most of these extensions just serve as helper methods that either make code easier to read or make it more efficient to do common tasks.</Description>
@@ -15,6 +15,7 @@
     <RepositoryUrl>https://github.com/SSAgov/ssax-primitive-extensions</RepositoryUrl>
     <PackageTags>extensions;primitive-types</PackageTags>
     <RepositoryType />
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>
