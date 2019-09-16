@@ -75,7 +75,7 @@ namespace SSAx.PrimitiveExtensions
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static List<string> GetPrimaryKeyColumnNames(this DataTable dt)
+        public static IEnumerable<string> GetPrimaryKeyColumnNames(this DataTable dt)
         {
             return dt
                 .GetPrimaryKeyColumns()
@@ -98,7 +98,7 @@ namespace SSAx.PrimitiveExtensions
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static List<string> GetNonPrimaryKeyColumnNames(this DataTable dt)
+        public static IEnumerable<string> GetNonPrimaryKeyColumnNames(this DataTable dt)
         {
 
             List<string> s = new List<string>();
@@ -135,7 +135,7 @@ namespace SSAx.PrimitiveExtensions
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static List<string> GetColumnNames(this DataTable dt)
+        public static IEnumerable<string> GetColumnNames(this DataTable dt)
         {
             List<string> s = new List<string>();
             foreach (DataColumn c in dt.Columns)
@@ -150,7 +150,7 @@ namespace SSAx.PrimitiveExtensions
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static List<string> GetNonIdentityColumnNames(this DataTable dt)
+        public static IEnumerable<string> GetNonIdentityColumnNames(this DataTable dt)
         {
             List<string> s = new List<string>();
             foreach (DataColumn c in dt.Columns)
@@ -176,7 +176,7 @@ namespace SSAx.PrimitiveExtensions
         {
             string sql = "";
 
-            List<string> columnNameList = dt.GetColumnNames();
+            List<string> columnNameList = dt.GetColumnNames().ToList();
 
             List<string> insertSqlStatements = new List<string>();
             List<string> valueList = new List<string>();
@@ -219,7 +219,7 @@ namespace SSAx.PrimitiveExtensions
 
             List<string> insertSqlStatements = new List<string>();
             List<string> valueList = new List<string>();
-            List<string> columnNameList = dt.GetColumnNames();
+            List<string> columnNameList = dt.GetColumnNames().ToList();
             string targetTableName = dt.TableName;
 
             if (overrideTableName != "")
@@ -264,7 +264,7 @@ namespace SSAx.PrimitiveExtensions
             string sql = "";
 
             List<string> deleteSqlStatements = new List<string>();
-            IList<string> pkColumnNames = dt.GetPrimaryKeyColumnNames();
+            IList<string> pkColumnNames = dt.GetPrimaryKeyColumnNames().ToList();
             List<string> valueList = new List<string>();
 
             string targetTableName = dt.TableName;
@@ -314,8 +314,8 @@ namespace SSAx.PrimitiveExtensions
 
             List<string> updateSqlStatements = new List<string>();
 
-            List<string> pkColumnNames = dt.GetPrimaryKeyColumnNames();
-            List<string> nonIdentityColumnNames = dt.GetNonIdentityColumnNames();
+            List<string> pkColumnNames = dt.GetPrimaryKeyColumnNames().ToList();
+            List<string> nonIdentityColumnNames = dt.GetNonIdentityColumnNames().ToList();
 
             List<string> pkValueList = new List<string>();
             List<string> valueList = new List<string>();
@@ -569,7 +569,7 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="GetExcludedColumns"></param>
         /// <returns></returns>
 
-        public static List<string> CommonNonKeyColumnNameList(this IList<DataTable> dts, bool GetExcludedColumns = false)
+        public static IEnumerable<string> CommonNonKeyColumnNameList(this IList<DataTable> dts, bool GetExcludedColumns = false)
         {
             Dictionary<string, int> columns = new Dictionary<string, int>();
             List<string> excludedColumns = new List<string>();

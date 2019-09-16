@@ -257,8 +257,8 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Columns.Add(c);
             dt.PrimaryKey = new DataColumn[] { c };
 
-            List<string> pks = dt.GetPrimaryKeyColumnNames();
-            Assert.Equal(1, pks.Count());
+            IEnumerable<string> pks = dt.GetPrimaryKeyColumnNames();
+            Assert.Single(pks);
         }
 
 
@@ -276,7 +276,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Columns.Add("G");
             dt.PrimaryKey = new DataColumn[] { c, d, e };
 
-            List<string> pks = dt.GetPrimaryKeyColumnNames();
+            IEnumerable<string> pks = dt.GetPrimaryKeyColumnNames();
             Assert.Equal(3, pks.Count());
             Assert.Contains("Idc", pks);
             Assert.Contains("Idd", pks);
@@ -297,7 +297,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Columns.Add("G");
             dt.PrimaryKey = new DataColumn[] { c, d, e };
 
-            List<string> nonPks = dt.GetNonPrimaryKeyColumnNames();
+            IEnumerable<string> nonPks = dt.GetNonPrimaryKeyColumnNames();
             Assert.Equal(2, nonPks.Count());
             Assert.Contains("F", nonPks);
             Assert.Contains("G", nonPks);
@@ -454,7 +454,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Columns.Add(e);
             dt.PrimaryKey = new DataColumn[] { c, d, e };
 
-            List<string> nonPks = dt.GetNonPrimaryKeyColumnNames();
+            IEnumerable<string> nonPks = dt.GetNonPrimaryKeyColumnNames();
             Assert.Equal(0, nonPks.Count());
         }
 
@@ -472,7 +472,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Columns.Add("G");
             dt.PrimaryKey = new DataColumn[] { c, d, e };
 
-            List<string> nonPks = dt.GetNonPrimaryKeyColumnNames();
+            IEnumerable<string> nonPks = dt.GetNonPrimaryKeyColumnNames();
             Assert.False(nonPks.Contains("Idc"));
             Assert.False(nonPks.Contains("Idd"));
             Assert.False(nonPks.Contains("Ide"));
@@ -490,7 +490,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Columns.Add(d);
             dt.Columns.Add(e);
            
-            List<string> collist = dt.GetColumnNames();
+            IEnumerable<string> collist = dt.GetColumnNames();
             Assert.Equal(3, collist.Count());
         }
         [Fact]
@@ -504,7 +504,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Columns.Add(d);
             dt.Columns.Add(e);
 
-            List<string> collist = dt.GetColumnNames();
+            IEnumerable<string> collist = dt.GetColumnNames();
             Assert.Contains("Id", collist);
             Assert.Contains("First Name", collist);
             Assert.Contains("Last Name", collist);
@@ -529,7 +529,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             // dtA.PrimaryKey = new DataColumn[] { pkCol };
             // dtA.Constraints.Add(uc);
 
-            List<string> collist = dtA.GetNonIdentityColumnNames();
+            IEnumerable<string> collist = dtA.GetNonIdentityColumnNames();
             Assert.True(collist.Count() == 3);
         }
 
@@ -553,7 +553,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             // dtA.PrimaryKey = new DataColumn[] { pkCol };
             // dtA.Constraints.Add(uc);
 
-            List<string> collist = dtA.GetNonIdentityColumnNames();
+            IEnumerable<string> collist = dtA.GetNonIdentityColumnNames();
             Assert.Contains("First Name", collist);
             Assert.Contains("Last Name", collist);
             Assert.Contains("Birthdate", collist);
@@ -578,7 +578,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             // dtA.PrimaryKey = new DataColumn[] { pkCol };
             // dtA.Constraints.Add(uc);
 
-            List<string> collist = dtA.GetNonIdentityColumnNames();
+            IEnumerable<string> collist = dtA.GetNonIdentityColumnNames();
             Assert.False(collist.Contains("Id"));
         }
 
@@ -1148,13 +1148,13 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt2.Columns.Add(f2);
 
             List<DataTable> l = new List<DataTable>();
-            List<String> result = new List<String>();
+            
             l.Add(dt1);
             l.Add(dt2);
 
-            result = l.CommonNonKeyColumnNameList();
+            var result = l.CommonNonKeyColumnNameList();
 
-            Assert.Equal(4, result.Count);
+            Assert.Equal(4, result.Count());
 
         }
 
@@ -1183,11 +1183,11 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt2.Columns.Add(f2);
 
             List<DataTable> l = new List<DataTable>();
-            List<String> result = new List<String>();
+            
             l.Add(dt1);
             l.Add(dt2);
 
-            result = l.CommonNonKeyColumnNameList();
+            var result = l.CommonNonKeyColumnNameList();
 
             Assert.Contains("Id", result);
             Assert.Contains("First Name", result);
@@ -1224,11 +1224,11 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt2.PrimaryKey = new DataColumn[] { c2 };
 
             List<DataTable> l = new List<DataTable>();
-            List<String> result = new List<String>();
+            
             l.Add(dt1);
             l.Add(dt2);
             
-            result = l.CommonNonKeyColumnNameList();
+            IEnumerable<string> result = l.CommonNonKeyColumnNameList();
 
             Assert.False(result.Contains("Id"));            
             Assert.False(result.Contains("Birth Date1"));
