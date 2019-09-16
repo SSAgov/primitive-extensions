@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using System.Reflection;
-using System.Data.Common;
 using System.Data;
 
-namespace SSAx.Extensions
+namespace SSAx.PrimitiveExtensions
 {
     /// <summary>
     /// Provides static methods that aid in performing database related operations.

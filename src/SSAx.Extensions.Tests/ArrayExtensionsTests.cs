@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Xunit;
 
-namespace SSAx.Extensions.Tests
+namespace SSAx.PrimitiveExtensions.Tests
 {
     public class ArrayExtensionsTests
     {

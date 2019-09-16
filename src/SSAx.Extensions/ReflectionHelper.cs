@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace SSAx.Extensions
+namespace SSAx.PrimitiveExtensions
 {
     /// <summary>
     ///     Provides static methods that aid in performing reflection related operations.

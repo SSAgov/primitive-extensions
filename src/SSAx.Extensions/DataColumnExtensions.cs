@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace SSAx.Extensions
+namespace SSAx.PrimitiveExtensions
 {
     public static class DbColumnExtensions
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SSAx.Extensions
+namespace SSAx.PrimitiveExtensions
 {
     /// <summary>
     /// Provides static methods that aid in performing object related operations.

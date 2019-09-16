@@ -4,11 +4,11 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SSAx.Extensions;
+using SSAx.PrimitiveExtensions;
 using Xunit;
 using System.IO;
 
-namespace SSAx.Extensions.Tests
+namespace SSAx.PrimitiveExtensions.Tests
 {
     public class FileSystemTests
     {

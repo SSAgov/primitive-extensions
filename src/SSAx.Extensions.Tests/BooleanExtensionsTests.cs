@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 
-namespace SSAx.Extensions.Tests
+namespace SSAx.PrimitiveExtensions.Tests
 {
     public class BooleanExtensionsTests
     {

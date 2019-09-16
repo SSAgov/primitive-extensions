@@ -7,7 +7,7 @@ using System.Text;
 
 
 
-namespace SSAx.Extensions
+namespace SSAx.PrimitiveExtensions
 {
     public static class DataTableHelper
     {

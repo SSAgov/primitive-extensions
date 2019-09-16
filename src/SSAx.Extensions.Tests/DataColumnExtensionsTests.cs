@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Xunit;
 
-namespace SSAx.Extensions.Tests
+namespace SSAx.PrimitiveExtensions.Tests
 {
     public class DataColumnExtensionsTests
     {
