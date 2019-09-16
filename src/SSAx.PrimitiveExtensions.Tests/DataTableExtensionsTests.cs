@@ -86,7 +86,8 @@ namespace SSAx.PrimitiveExtensions.Tests
             dtA.Rows.Add(1, "Joe", "Smith");
             dtA.Rows.Add(2, "Beatrice", "Smith");
 
-            dtA.SetBestGuessPrimaryKey();
+            bool result = dtA.SetBestGuessPrimaryKey();
+            Assert.True(result);
             Assert.Equal("Id", dtA.PrimaryKey[0].ColumnName);
         }
 
@@ -103,7 +104,8 @@ namespace SSAx.PrimitiveExtensions.Tests
             dtA.Rows.Add(1, "Mike", "Smith II");
             dtA.Rows.Add(2, "Mike", "Smith II");
 
-            dtA.SetBestGuessPrimaryKey();
+            bool result = dtA.SetBestGuessPrimaryKey();
+            Assert.True(result);
             Assert.Equal(3, dtA.PrimaryKey.Count());
         }
 
@@ -123,13 +125,14 @@ namespace SSAx.PrimitiveExtensions.Tests
             dtA.Rows.Add("Kitchen", "Panaphonics", "Black", "TV");
             dtA.Rows.Add("Bathroom", "Panaphonics", "Blue", "TV");
 
-            dtA.SetBestGuessPrimaryKey();
+            bool result = dtA.SetBestGuessPrimaryKey();
+            Assert.True(result);
             Assert.Equal(3, dtA.PrimaryKey.Count());
             
         }
 
         [Fact]
-        public void SetBestGuessPrimaryKey_Given4Columns_NotExpect1()
+        public void SetBestGuessPrimaryKey_Given4Columns_Expect3ColumnKey()
         {
             DataTable dtA = new DataTable();
             dtA.Columns.Add("Location");
@@ -143,8 +146,31 @@ namespace SSAx.PrimitiveExtensions.Tests
             dtA.Rows.Add("Kitchen", "Panaphonics", "Black", "TV");
             dtA.Rows.Add("Bathroom", "Panaphonics", "Blue", "TV");
 
-            dtA.SetBestGuessPrimaryKey();
+            bool result  = dtA.SetBestGuessPrimaryKey();
+            Assert.True(result);
             Assert.NotEqual("Location", dtA.PrimaryKey[0].ColumnName);
+            Assert.Equal(3,dtA.PrimaryKey.Count());
+        }
+
+        [Fact]
+        public void SetBestGuessPrimaryKey_Given4Columns_ExpectNoKeyFound()
+        {
+            DataTable dtA = new DataTable();
+            dtA.Columns.Add("Location");
+            dtA.Columns.Add("Model");
+            dtA.Columns.Add("Color Name");
+            dtA.Columns.Add("Device");
+
+            dtA.Rows.Add("Kitchen", "Sorny", "Black", "TV");
+            dtA.Rows.Add("Kitchen", "Sorny", "Red", "TV");
+            dtA.Rows.Add("Kitchen", "Sorny", "Red", "Radio");
+            dtA.Rows.Add("Kitchen", "Panaphonics", "Black", "TV");
+            dtA.Rows.Add("Bathroom", "Panaphonics", "Blue", "TV");
+            dtA.Rows.Add("Bathroom", "Panaphonics", "Blue", "TV");
+
+            bool result = dtA.SetBestGuessPrimaryKey();
+            Assert.False(result);
+            Assert.Empty(dtA.PrimaryKey);
         }
 
 

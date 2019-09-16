@@ -482,16 +482,17 @@ namespace SSAx.PrimitiveExtensions
         }
 
         /// <summary>
-        /// Sets a best guess of a primary key 
+        /// /// Sets a best guess of a primary key 
         /// </summary>
         /// <param name="dt"></param>
-        public static void SetBestGuessPrimaryKey(this DataTable dt)
+        /// <returns>Returns true if a key unique key was able to be created as the primary key. Returns false is no key was able to be found.</returns>
+        public static bool SetBestGuessPrimaryKey(this DataTable dt)
         {
             if (dt.PrimaryKey.Count() > 0)
-                return;
+                return true;
 
             if (TryToSetPrimaryKeyBasedOnCommonNames(dt))
-                return;
+                return true;
 
             DataColumn[] pkeys = null;
 
@@ -508,12 +509,12 @@ namespace SSAx.PrimitiveExtensions
                 try
                 {
                     dt.PrimaryKey = pkeys;
-                    return;
+                    return true;
                 }
                 catch (Exception)
                 { }
             }
-            return;
+            return false;
         }
 
 
