@@ -7,8 +7,14 @@
     <Company>Social Security Administration</Company>
     <Product>SSA Primitive Extensions</Product>
     <Description>A .NET Standard 2.0 library of extension methods for primitive types such as string, DateTime, boolean, el al. Most of these extensions just serve as helper methods that either make code easier to read or make it more efficient to do common tasks.</Description>
-    <PackageLicenseUrl>https://github.com/SSAgov/ssax-extensions/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/SSAgov/ssax-primitive-extensions/blob/master/LICENSE</PackageLicenseUrl>
     <NeutralLanguage>en</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SSAgov/ssax-primitive-extensions</RepositoryUrl>
+    <PackageTags>extensions;primitive-types</PackageTags>
+    <RepositoryType />
   </PropertyGroup>
 
 </Project>
