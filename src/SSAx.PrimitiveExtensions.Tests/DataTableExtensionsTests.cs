@@ -1163,16 +1163,58 @@ namespace SSAx.PrimitiveExtensions.Tests
             l.Add(dt1);
             l.Add(dt2);
 
-            var shared_nonKey = l.GetColumnNames_NonPrimaryKey_Shared();
-            var shared_key = l.GetColumnNames_PrimaryKey_Shared();
-            var notshared_nonKey = l.GetColumnNames_NonPrimaryKey_NotShared();
-            var notshared_key = l.GetColumnNames_NonPrimaryKey_NotShared();
+            var shared_nonKey = l.GetColumnNames_Shared_NonPrimaryKey();
+            var shared_key = l.GetColumnNames_Shared_PrimaryKey();
+            var notshared_nonKey = l.GetColumnNames_NotShared_NonPrimaryKey();
+            var notshared_key = l.GetColumnNames_NotShared_NonPrimaryKey();
 
             Assert.Empty(notshared_key);
             Assert.Empty(notshared_nonKey);
 
             Assert.Single(shared_key);
             
+
+            Assert.Equal(3, shared_nonKey.Count());
+            Assert.Contains("First Name", shared_nonKey);
+            Assert.Contains("Last Name", shared_nonKey);
+            Assert.Contains("Birth Date", shared_nonKey);
+            Assert.DoesNotContain("Id", shared_nonKey);
+        }
+        [Fact]
+        public void GetSharedColumnNames_GivenTwoTable_ExpectAllCommonNonKeyColumns()
+        {
+            DataTable dt1 = new DataTable("dt1");
+            dt1.Columns.Add(new DataColumn("Id"));
+            dt1.Columns.Add(new DataColumn("First Name"));
+            dt1.Columns.Add(new DataColumn("Last Name"));
+            dt1.Columns.Add(new DataColumn("Birth Date"));
+            dt1.SetBestGuessPrimaryKey();
+
+            DataTable dt2 = new DataTable("dt2");
+            dt2.Columns.Add(new DataColumn("Id"));
+            dt2.Columns.Add(new DataColumn("First Name"));
+            dt2.Columns.Add(new DataColumn("Last Name"));
+            dt2.Columns.Add(new DataColumn("Birth Date"));
+            dt2.SetBestGuessPrimaryKey();
+
+            List<DataTable> l = new List<DataTable>();
+            l.Add(dt1);
+            l.Add(dt2);
+
+            var shared_nonKey = l.GetColumnNames_Shared_NonPrimaryKey();
+            var shared_key = l.GetColumnNames_Shared_PrimaryKey();
+            var notshared_nonKey = l.GetColumnNames_NotShared_NonPrimaryKey();
+            var notshared_key = l.GetColumnNames_NotShared_PrimaryKey();
+            var shared = l.GetColumnNames_Shared_All();
+            var notShared = l.GetColumnNames_NotShared_All();
+
+            Assert.Equal(4, shared.Count());
+            Assert.Empty(notShared);
+            Assert.Empty(notshared_key);
+            Assert.Empty(notshared_nonKey);
+
+            Assert.Single(shared_key);
+
 
             Assert.Equal(3, shared_nonKey.Count());
             Assert.Contains("First Name", shared_nonKey);
@@ -1203,7 +1245,7 @@ namespace SSAx.PrimitiveExtensions.Tests
             l.Add(dt1);
             l.Add(dt2);
             
-            IEnumerable<string> result = l.GetColumnNames_NonPrimaryKey_Shared();
+            IEnumerable<string> result = l.GetColumnNames_Shared_NonPrimaryKey();
 
             Assert.False(result.Contains("Id"));            
             Assert.False(result.Contains("Birth Date1"));

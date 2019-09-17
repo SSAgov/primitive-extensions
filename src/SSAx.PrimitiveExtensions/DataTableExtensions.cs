@@ -447,7 +447,7 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="dts"></param>
         /// <param name="ignoreCase"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetColumnNames_NonPrimaryKey_Shared(this IEnumerable<DataTable> dts)
+        public static IEnumerable<string> GetColumnNames_Shared_NonPrimaryKey(this IEnumerable<DataTable> dts)
         {
             return GetColumns(dts, false, true);
         }
@@ -459,7 +459,7 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="dts"></param>
         /// <param name="caseSensitive"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetColumnNames_PrimaryKey_Shared(this IEnumerable<DataTable> dts)
+        public static IEnumerable<string> GetColumnNames_Shared_PrimaryKey(this IEnumerable<DataTable> dts)
         {
             return GetColumns(dts, true, true);
         }
@@ -471,7 +471,7 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="dts"></param>
         /// <param name="ignoreCase"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetColumnNames_PrimaryKey_NotShared(this IEnumerable<DataTable> dts)
+        public static IEnumerable<string> GetColumnNames_NotShared_PrimaryKey(this IEnumerable<DataTable> dts)
         {
             return GetColumns(dts, true, false);
         }
@@ -483,11 +483,20 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="dts"></param>
         /// <param name="caseSensitive"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetColumnNames_NonPrimaryKey_NotShared(this IEnumerable<DataTable> dts)
+        public static IEnumerable<string> GetColumnNames_NotShared_NonPrimaryKey(this IEnumerable<DataTable> dts)
         {
             return GetColumns(dts, false, false);
         }
 
+        public static IEnumerable<string> GetColumnNames_Shared_All(this IEnumerable<DataTable> dts)
+        {
+            return dts.GetColumnNames_Shared_PrimaryKey().Union(dts.GetColumnNames_Shared_NonPrimaryKey());
+        }
+
+        public static IEnumerable<string> GetColumnNames_NotShared_All(this IEnumerable<DataTable> dts)
+        {
+            return dts.GetColumnNames_NotShared_PrimaryKey().Union(dts.GetColumnNames_NotShared_NonPrimaryKey());
+        }
 
         private static IEnumerable<string> GetColumns(IEnumerable<DataTable> dts, bool getKey = true, bool getShared = false)
         {
