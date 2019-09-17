@@ -628,51 +628,104 @@ namespace SSAx.PrimitiveExtensions.Tests
         #region get sql update 
 
         [Fact]
-        public void GetInsertSql_Given1Row_ExpectOnly1Insert()
+        public void GetInsertSql_OnlySpacesWrapped_Formatted_Given1Row_ExpectOnly1Insert()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
+            dt.Rows.Add(1, "John", "Doe");
+
+            SqlGeneratorConfig c = new SqlGeneratorConfig("new table");
+            c.FormatSqlText = true;
+
+            string sql = dt.GetInsertSql(c).First();
+            string expected = "INSERT INTO `new table` (Id, `First Name`, `Last Name`) \r\nVALUES ('1', 'John', 'Doe');";
+
+            Assert.Equal(expected, sql);
+        }
 
 
-            dt.PrimaryKey = new DataColumn[] { c };
+        [Fact]
+        public void GetInsertSql_OnlySpacesWrapped_NotFormatted_Given1Row_ExpectOnly1Insert()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
+            dt.Rows.Add(1, "John", "Doe");
 
-            dt.Rows.Add(1, "Jhon", "Doe");
+            SqlGeneratorConfig c = new SqlGeneratorConfig("new table");
+            c.FormatSqlText = false;
+
+            string sql = dt.GetInsertSql(c).First();
+            string expected = "INSERT INTO `new table` (Id, `First Name`, `Last Name`) VALUES ('1', 'John', 'Doe');";
+
+            Assert.Equal(expected, sql);
+        }
+
+        [Fact]
+        public void GetInsertSql_AllWrapped_Formatted_Given1Row_ExpectOnly1Insert()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
+            dt.Rows.Add(1, "John", "Doe");
+
+            SqlGeneratorConfig c = new SqlGeneratorConfig("new table");
+            c.FormatSqlText = true;
+            c.NameWrappingPattern = IdentifierWrappingPattern.WrapAllObjectNames;
+
+            string sql = dt.GetInsertSql(c).First();
+            string expected = "INSERT INTO `new table` (`Id`, `First Name`, `Last Name`) \r\nVALUES ('1', 'John', 'Doe');";
+
+            Assert.Equal(expected, sql);
+        }
 
 
-            var x = dt.GetInsertSql("schema", "newtable");
+        [Fact]
+        public void GetInsertSql_AllQuoted_NotFormatted_Given1Row_ExpectOnly1Insert()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
+            dt.Rows.Add(1, "John", "Doe");
 
-            Assert.Equal(1, x.Count());
+            SqlGeneratorConfig c = new SqlGeneratorConfig("new table");
+            c.FormatSqlText = false;
+            c.NameWrappingPattern = IdentifierWrappingPattern.WrapAllObjectNames;
 
+            string sql = dt.GetInsertSql(c).First();
+            string expected = "INSERT INTO `new table` (`Id`, `First Name`, `Last Name`) VALUES ('1', 'John', 'Doe');";
+
+            Assert.Equal(expected, sql);
         }
 
         [Fact]
         public void GetInsertSql_Given3Row_Expect3insertsql()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
-
-            dt.PrimaryKey = new DataColumn[] { c };
-
-            dt.Rows.Add(1, "Jhon", "Doe");
+            dt.Rows.Add(1, "John", "Doe");
             dt.Rows.Add(2, "Mark", "Smith");
             dt.Rows.Add(3, "Mary", "Doe");
+            SqlGeneratorConfig config = new SqlGeneratorConfig("newtable","schema");
+            
+            var x = dt.GetInsertSql(config);
 
-            var x = dt.GetInsertSql("schema", "newtable");
-
-            Assert.Equal("INSERT INTO schema.newtable (Id, First Name, Last Name) \r\nVALUES ('1', 'Jhon', 'Doe');", x.ElementAt(0));
-            Assert.Equal("INSERT INTO schema.newtable (Id, First Name, Last Name) \r\nVALUES ('2', 'Mark', 'Smith');", x.ElementAt(1));
-            Assert.Equal("INSERT INTO schema.newtable (Id, First Name, Last Name) \r\nVALUES ('3', 'Mary', 'Doe');", x.ElementAt(2));
+            Assert.Equal("INSERT INTO schema.newtable (Id, `First Name`, `Last Name`) VALUES ('1', 'John', 'Doe');", x.ElementAt(0));
+            Assert.Equal("INSERT INTO schema.newtable (Id, `First Name`, `Last Name`) VALUES ('2', 'Mark', 'Smith');", x.ElementAt(1));
+            Assert.Equal("INSERT INTO schema.newtable (Id, `First Name`, `Last Name`) VALUES ('3', 'Mary', 'Doe');", x.ElementAt(2));
           
         }
 
@@ -680,21 +733,15 @@ namespace SSAx.PrimitiveExtensions.Tests
         public void GetInsertSql_Given0Row_ExpectNoInsert()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
 
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
+            SqlGeneratorConfig config = new SqlGeneratorConfig("no table");
+            var x = dt.GetInsertSql(config);
 
-            dt.PrimaryKey = new DataColumn[] { c };
-
-          
-
-            var x = dt.GetInsertSql("schema", "newtable");
-
-            Assert.Equal(0, x.Count());
+            Assert.Empty(x);
            
         }
 
@@ -702,24 +749,21 @@ namespace SSAx.PrimitiveExtensions.Tests
         public void GetInsertSqlByRowState_Given3Col_Expectsqlwith3col()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
-
-            dt.PrimaryKey = new DataColumn[] { c };
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
             dt.Rows.Add(1, "Jhon", "Doe");
             dt.Rows.Add(2, "Mark", "Smith");
-            dt.Rows.Add(3, "Mary", "Doe");           
+            dt.Rows.Add(3, "Mary", "Doe");
 
-            var x = dt.GetInsertSqlByRowState("schema", "newtable");
+            SqlGeneratorConfig config = new SqlGeneratorConfig("newtable", "schema");
+            var x = dt.GetInsertSqlByRowState(config);
 
-            Assert.Equal("INSERT INTO schema.newtable (Id, First Name, Last Name) \r\nVALUES ('1', 'Jhon', 'Doe');", x.ElementAt(0));
-            Assert.Equal("INSERT INTO schema.newtable (Id, First Name, Last Name) \r\nVALUES ('2', 'Mark', 'Smith');", x.ElementAt(1));
-            Assert.Equal("INSERT INTO schema.newtable (Id, First Name, Last Name) \r\nVALUES ('3', 'Mary', 'Doe');", x.ElementAt(2));
+            Assert.Equal("INSERT INTO schema.newtable (Id, `First Name`, `Last Name`) VALUES ('1', 'Jhon', 'Doe');", x.ElementAt(0));
+            Assert.Equal("INSERT INTO schema.newtable (Id, `First Name`, `Last Name`) VALUES ('2', 'Mark', 'Smith');", x.ElementAt(1));
+            Assert.Equal("INSERT INTO schema.newtable (Id, `First Name`, `Last Name`) VALUES ('3', 'Mary', 'Doe');", x.ElementAt(2));
 
 
         }
@@ -728,14 +772,10 @@ namespace SSAx.PrimitiveExtensions.Tests
         public void GetDeleteSqlByRowState_Given3Row_Expect3deletesql()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
-
-            dt.PrimaryKey = new DataColumn[] { c };
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
             dt.Rows.Add(1, "Jhon", "Doe");
             dt.Rows.Add(2, "Mark", "Smith");            
@@ -746,7 +786,8 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Rows[1].Delete();
             dt.Rows[2].Delete();
 
-            var x = dt.GetDeleteSqlByRowState("schema", "dt");
+            SqlGeneratorConfig config = new SqlGeneratorConfig("table");
+            var x = dt.GetDeleteSqlByRowState(config);
 
             Assert.Equal(3, x.Count());
         }
@@ -756,20 +797,16 @@ namespace SSAx.PrimitiveExtensions.Tests
         public void GetDeleteSqlByRowState_Given0Row_Expect0deletesql()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
-            dt.PrimaryKey = new DataColumn[] { c };
+            SqlGeneratorConfig config = new SqlGeneratorConfig("table");
+            var x = dt.GetDeleteSqlByRowState(config);
 
-           
 
-            var x = dt.GetDeleteSqlByRowState("schema", "dt");
-
-            Assert.Equal(0, x.Count());
+            Assert.Empty(x);
         }
 
 
@@ -777,14 +814,10 @@ namespace SSAx.PrimitiveExtensions.Tests
         public void GetDeleteSqlByRowState_Given3Row_Expect3Exactdeletesql()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
-
-            dt.PrimaryKey = new DataColumn[] { c };
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
             dt.Rows.Add(1, "Jhon", "Doe");
             dt.Rows.Add(2, "Mark", "Smith");
@@ -795,28 +828,26 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Rows[1].Delete();
             dt.Rows[2].Delete();
 
-            var x = dt.GetDeleteSqlByRowState("schema", "dt");
+            SqlGeneratorConfig config = new SqlGeneratorConfig("dt","schema");
+            config.PrefixColumnNameWithTableName = true;
+            var x = dt.GetDeleteSqlByRowState(config);
 
-            Assert.Equal("DELETE FROM schema.dt \nWHERE \n\tdt.Id = '1';", x.ElementAt(0));
-            Assert.Equal("DELETE FROM schema.dt \nWHERE \n\tdt.Id = '2';", x.ElementAt(1));
-            Assert.Equal("DELETE FROM schema.dt \nWHERE \n\tdt.Id = '3';", x.ElementAt(2));
+            Assert.Equal("DELETE FROM schema.dt WHERE dt.Id = '1';", x.ElementAt(0));
+            Assert.Equal("DELETE FROM schema.dt WHERE dt.Id = '2';", x.ElementAt(1));
+            Assert.Equal("DELETE FROM schema.dt WHERE dt.Id = '3';", x.ElementAt(2));
         }
 
         [Fact]
         public void GetUpdateSqlByRowState_Given3row_Expect3sqlwithupdate()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
-            dt.PrimaryKey = new DataColumn[] { c };
-
-            dt.Rows.Add(1, "Jhon", "Doe");
-            dt.Rows.Add(2, "Mark", "Smith");
+            dt.Rows.Add(1, "John", "Doe");
+            dt.Rows.Add(2, "Mark", "Mark");
             dt.Rows.Add(3, "Mary", "Doe");
 
             dt.AcceptChanges();
@@ -825,50 +856,37 @@ namespace SSAx.PrimitiveExtensions.Tests
             dt.Rows[1]["Last Name"] = "Smith";
             dt.Rows[2]["Last Name"] = "Smith";
 
-
-
-            var x = dt.GetUpdateSqlByRowState("schema", "dt");
+            SqlGeneratorConfig config = new SqlGeneratorConfig("table");
+            var x = dt.GetUpdateSqlByRowState(config);
 
             
             Assert.Equal(3, x.Count());
-
         }
 
         [Fact]
         public void GetUpdateSqlByRowState_Given0row_Expect0sql()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
-            dt.PrimaryKey = new DataColumn[] { c };
-
-            
-            var x = dt.GetUpdateSqlByRowState("schema", "dt");
-
-            Assert.Equal(0, x.Count());
-            
-
+            SqlGeneratorConfig config = new SqlGeneratorConfig("table");
+            var x = dt.GetUpdateSqlByRowState(config);
+            Assert.Empty(x);
         }
 
         [Fact]
         public void GetUpdateSqlByRowState_Given3row_Expect3exactsql()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
+            dt.Columns.Add("Id", typeof(int));
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
-            dt.PrimaryKey = new DataColumn[] { c };
-
-            dt.Rows.Add(1, "Jhon", "Doe");
+            dt.Rows.Add(1, "John", "Doe");
             dt.Rows.Add(2, "Mark", "Smith");
             dt.Rows.Add(3, "Mary", "Doe");
 
@@ -877,15 +895,17 @@ namespace SSAx.PrimitiveExtensions.Tests
 
             dt.Rows[0]["Last Name"] = "Smith";
             dt.Rows[1]["Last Name"] = "Smith";
-            dt.Rows[2]["Last Name"] = "Smith";
+            dt.Rows[2]["Id"] = 4;
 
+            SqlGeneratorConfig config = new SqlGeneratorConfig("dt", "schema");
+            config.PrefixColumnNameWithTableName = true;
+            config.PrefixTableWithSchema = true;
 
-            var x = dt.GetUpdateSqlByRowState("schema", "dt");
+            var x = dt.GetUpdateSqlByRowState(config);
 
-            Assert.Equal("UPDATE schema.dt \nSET dt.Id = '1', \n\tdt.First Name = 'Jhon', \n\tdt.Last Name = 'Smith'\r\nWHERE \n\tdt.Id = '1';", x.ElementAt(0));
-            Assert.Equal("UPDATE schema.dt \nSET dt.Id = '2', \n\tdt.First Name = 'Mark', \n\tdt.Last Name = 'Smith'\r\nWHERE \n\tdt.Id = '2';", x.ElementAt(1));
-            Assert.Equal("UPDATE schema.dt \nSET dt.Id = '3', \n\tdt.First Name = 'Mary', \n\tdt.Last Name = 'Smith'\r\nWHERE \n\tdt.Id = '3';", x.ElementAt(2));
-
+            Assert.Equal("UPDATE schema.dt SET dt.Id = 1, dt.`First Name` = 'John', dt.`Last Name` = 'Smith' WHERE dt.Id = 1;", x.ElementAt(0));
+            Assert.Equal("UPDATE schema.dt SET dt.Id = 2, dt.`First Name` = 'Mark', dt.`Last Name` = 'Smith' WHERE dt.Id = 2;", x.ElementAt(1));
+            Assert.Equal("UPDATE schema.dt SET dt.Id = 4, dt.`First Name` = 'Mary', dt.`Last Name` = 'Doe' WHERE dt.Id = 3;", x.ElementAt(2));
         }
        
         #endregion
@@ -934,13 +954,10 @@ namespace SSAx.PrimitiveExtensions.Tests
         public void SimpleDataTableCopier_Given1Table3Row_ExpectAll3Rows()
         {
             DataTable dt = new DataTable();
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            dt.Columns.Add(c);
-            dt.Columns.Add(d);
-            dt.Columns.Add(e);
-            dt.PrimaryKey = new DataColumn[] { c };
+            dt.Columns.Add("Id");
+            dt.Columns.Add("First Name");
+            dt.Columns.Add("Last Name");
+            dt.SetBestGuessPrimaryKey();
 
             dt.Rows.Add(1, "Jhon","Doe");
             dt.Rows.Add(2 ,"Mark", "Smith");
@@ -1123,112 +1140,70 @@ namespace SSAx.PrimitiveExtensions.Tests
          
         }
 
+
+
         [Fact]
-        public void CommonNonKeyColumnNameList_GivenTwoTable_ExpectTotalCommonNonKeyColumns()
+        public void GetSharedNonKeyColumnNames_GivenTwoTable_ExpectAllCommonNonKeyColumns()
         {
             DataTable dt1 = new DataTable("dt1");
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            DataColumn f = new DataColumn("Birth Date");
-            dt1.Columns.Add(c);
-            dt1.Columns.Add(d);
-            dt1.Columns.Add(e);
-            dt1.Columns.Add(f);
-
+            dt1.Columns.Add(new DataColumn("Id"));
+            dt1.Columns.Add(new DataColumn("First Name"));
+            dt1.Columns.Add(new DataColumn("Last Name"));
+            dt1.Columns.Add(new DataColumn("Birth Date"));
+            dt1.SetBestGuessPrimaryKey();
 
             DataTable dt2 = new DataTable("dt2");
-            DataColumn c2 = new DataColumn("Id");
-            DataColumn d2 = new DataColumn("First Name");
-            DataColumn e2 = new DataColumn("Last Name");
-            DataColumn f2 = new DataColumn("Birth Date");
-            dt2.Columns.Add(c2);
-            dt2.Columns.Add(d2);
-            dt2.Columns.Add(e2);
-            dt2.Columns.Add(f2);
+            dt2.Columns.Add(new DataColumn("Id"));
+            dt2.Columns.Add(new DataColumn("First Name"));
+            dt2.Columns.Add(new DataColumn("Last Name"));
+            dt2.Columns.Add(new DataColumn("Birth Date"));
+            dt2.SetBestGuessPrimaryKey();
 
             List<DataTable> l = new List<DataTable>();
-            
             l.Add(dt1);
             l.Add(dt2);
 
-            var result = l.CommonNonKeyColumnNameList();
+            var shared_nonKey = l.GetColumnNames_NonPrimaryKey_Shared();
+            var shared_key = l.GetColumnNames_PrimaryKey_Shared();
+            var notshared_nonKey = l.GetColumnNames_NonPrimaryKey_NotShared();
+            var notshared_key = l.GetColumnNames_NonPrimaryKey_NotShared();
 
-            Assert.Equal(4, result.Count());
+            Assert.Empty(notshared_key);
+            Assert.Empty(notshared_nonKey);
 
+            Assert.Single(shared_key);
+            
+
+            Assert.Equal(3, shared_nonKey.Count());
+            Assert.Contains("First Name", shared_nonKey);
+            Assert.Contains("Last Name", shared_nonKey);
+            Assert.Contains("Birth Date", shared_nonKey);
+            Assert.DoesNotContain("Id", shared_nonKey);
         }
 
         [Fact]
-        public void CommonNonKeyColumnNameList_GivenTwoTable_ExpectAllCommonNonKeyColumns()
+        public void GetSharedNonKeyColumnNames_GivenTwoTable_NotExpectUnCommonColumns()
         {
             DataTable dt1 = new DataTable("dt1");
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            DataColumn f = new DataColumn("Birth Date");
-            dt1.Columns.Add(c);
-            dt1.Columns.Add(d);
-            dt1.Columns.Add(e);
-            dt1.Columns.Add(f);
-
+            dt1.Columns.Add(new DataColumn("Id"));
+            dt1.Columns.Add(new DataColumn("First Name"));
+            dt1.Columns.Add(new DataColumn("Last Name"));
+            dt1.Columns.Add(new DataColumn("Birth Date"));
+            dt1.SetBestGuessPrimaryKey();
 
             DataTable dt2 = new DataTable("dt2");
-            DataColumn c2 = new DataColumn("Id");
-            DataColumn d2 = new DataColumn("First Name");
-            DataColumn e2 = new DataColumn("Last Name");
-            DataColumn f2 = new DataColumn("Birth Date");
-            dt2.Columns.Add(c2);
-            dt2.Columns.Add(d2);
-            dt2.Columns.Add(e2);
-            dt2.Columns.Add(f2);
-
-            List<DataTable> l = new List<DataTable>();
-            
-            l.Add(dt1);
-            l.Add(dt2);
-
-            var result = l.CommonNonKeyColumnNameList();
-
-            Assert.Contains("Id", result);
-            Assert.Contains("First Name", result);
-            Assert.Contains("Last Name", result);
-            Assert.Contains("Birth Date", result);
-
-        }
-
-        [Fact]
-        public void CommonNonKeyColumnNameList_GivenTwoTable_NotExpectUnCommonColumns()
-        {
-            DataTable dt1 = new DataTable("dt1");
-            DataColumn c = new DataColumn("Id");
-            DataColumn d = new DataColumn("First Name");
-            DataColumn e = new DataColumn("Last Name");
-            DataColumn f = new DataColumn("Birth Date1");
-            
-            dt1.Columns.Add(c);
-            dt1.Columns.Add(d);
-            dt1.Columns.Add(e);
-            dt1.Columns.Add(f);
-            dt1.PrimaryKey = new DataColumn[] { c };
-
-            DataTable dt2 = new DataTable("dt2");
-            DataColumn c2 = new DataColumn("Id");
-            DataColumn d2 = new DataColumn("First Name");
-            DataColumn e2 = new DataColumn("Last Name");
-            DataColumn f2 = new DataColumn("Birth Date2");
-           
-            dt2.Columns.Add(c2);
-            dt2.Columns.Add(d2);
-            dt2.Columns.Add(e2);
-            dt2.Columns.Add(f2);
-            dt2.PrimaryKey = new DataColumn[] { c2 };
+            dt2.Columns.Add(new DataColumn("Id"));
+            dt2.Columns.Add(new DataColumn("First Name"));
+            dt2.Columns.Add(new DataColumn("Last Name"));
+            dt2.Columns.Add(new DataColumn("Birth Date"));
+            dt2.SetBestGuessPrimaryKey();
 
             List<DataTable> l = new List<DataTable>();
             
             l.Add(dt1);
             l.Add(dt2);
             
-            IEnumerable<string> result = l.CommonNonKeyColumnNameList();
+            IEnumerable<string> result = l.GetColumnNames_NonPrimaryKey_Shared();
 
             Assert.False(result.Contains("Id"));            
             Assert.False(result.Contains("Birth Date1"));

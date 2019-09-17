@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/SSAgov/ssax-primitive-extensions</RepositoryUrl>
     <PackageTags>extensions;primitive-types</PackageTags>
     <RepositoryType />
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
 </Project>

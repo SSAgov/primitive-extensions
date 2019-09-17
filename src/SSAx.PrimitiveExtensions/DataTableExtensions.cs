@@ -32,27 +32,27 @@ namespace SSAx.PrimitiveExtensions
                 dt.TableName = "table1";
             }
 
-             MemoryStream xmlStream = new MemoryStream();
-             dt.WriteXmlSchema(xmlStream);
+            MemoryStream xmlStream = new MemoryStream();
+            dt.WriteXmlSchema(xmlStream);
 
-             xmlStream.Position = 0;
+            xmlStream.Position = 0;
 
-             StreamReader reader = new StreamReader(xmlStream);
-             dtPage.ReadXmlSchema(reader);
+            StreamReader reader = new StreamReader(xmlStream);
+            dtPage.ReadXmlSchema(reader);
 
-             var pageRows = dt.Rows.Cast<System.Data.DataRow>()
-             .Skip((pageNum - 1) * pageSize)
-             .Take(pageSize);
-             //.CopyToDataTable(dtPage, LoadOption.PreserveChanges);
-             
-             //TODO ?temp? fix until .CopyToDataTable is added to dotnetcore / dotnetstandard
-             //https://github.com/dotnet/corefx/issues/19771
-             //
-             foreach (var row in pageRows)
-             {
-                 dtPage.Rows.Add(row.ItemArray);
-             }
-           
+            var pageRows = dt.Rows.Cast<System.Data.DataRow>()
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize);
+            //.CopyToDataTable(dtPage, LoadOption.PreserveChanges);
+
+            //TODO ?temp? fix until .CopyToDataTable is added to dotnetcore / dotnetstandard
+            //https://github.com/dotnet/corefx/issues/19771
+            //
+            foreach (var row in pageRows)
+            {
+                dtPage.Rows.Add(row.ItemArray);
+            }
+
             return dtPage;
         }
 
@@ -163,47 +163,24 @@ namespace SSAx.PrimitiveExtensions
             return s;
         }
 
+
         /// <summary>
-        /// Returns sql statement to instert data into a table
+        /// Gets a collection of SQL Statements based on the data in, and the structure of the DataTable
         /// </summary>
         /// <param name="dt"></param>
-        /// <param name="schemaName"></param>
-        /// <param name="overrideTableName"></param>
-        /// <param name="format"></param>
-        /// <param name="trimSpacesOnNonKey"></param>
+        /// <param name="config"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetInsertSql(this DataTable dt, string schemaName, string overrideTableName = "", bool format = true, bool trimSpacesOnNonKey = true)
+        public static IEnumerable<string> GetInsertSql(this DataTable dt, SqlGeneratorConfig config)
         {
-            string sql = "";
-
-            List<string> columnNameList = dt.GetColumnNames().ToList();
-
             List<string> insertSqlStatements = new List<string>();
-            List<string> valueList = new List<string>();
-
-            string targetTableName = dt.TableName;
-
-            if (overrideTableName != "")
+            foreach (DataRow row in dt.Rows)
             {
-                targetTableName = overrideTableName;
-            }
-
-            foreach (DataRow r in dt.Rows)
-            {
-                foreach (string columnName in columnNameList)
-                {
-                    valueList.Add(r[columnName].EncodeAsSqlVariable());
-                }
-
-                sql = string.Format("INSERT INTO {0}.{1} ({2}) ", schemaName, targetTableName, string.Join(", ", columnNameList));
-                if (format) sql += Environment.NewLine;
-                sql += string.Format("VALUES ({0});", string.Join( ", ", valueList));
+                string sql = row.GetInsertSql(config);
                 insertSqlStatements.Add(sql);
-                valueList.Clear();
             }
             return insertSqlStatements;
-
         }
+        
 
         /// <summary>
         /// Returns sql statement by row state to instert data into a table
@@ -213,35 +190,33 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="overrideTableName"></param>
         /// <param name="tabulate"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetInsertSqlByRowState(this DataTable dt, string schemaName, string overrideTableName = "", bool tabulate = true)
+        public static IEnumerable<string> GetInsertSqlByRowState(this DataTable dt, SqlGeneratorConfig config)
         {
-            string sql = "";
 
             List<string> insertSqlStatements = new List<string>();
             List<string> valueList = new List<string>();
             List<string> columnNameList = dt.GetColumnNames().ToList();
             string targetTableName = dt.TableName;
 
-            if (overrideTableName != "")
-            {
-                targetTableName = overrideTableName;
-            }
+            DataTable dtAdded = dt.GetChanges(DataRowState.Added);
 
-            foreach (DataRow r in dt.Rows)
-            {
-                if (r.RowState == DataRowState.Added)
-                {
-                    foreach (string columnName in columnNameList)
-                    {
-                        valueList.Add(r[columnName].EncodeAsSqlVariable());
-                    }
 
-                    sql = string.Format("INSERT INTO {0}.{1} ({2}) ", schemaName, targetTableName, string.Join(", ", columnNameList));
-                    if (tabulate) sql += Environment.NewLine;
-                    sql += string.Format("VALUES ({0});", string.Join(", ", valueList));
-                    insertSqlStatements.Add(sql);
-                    valueList.Clear();
-                }
+            foreach (DataRow r in dtAdded.Rows)
+            {
+                insertSqlStatements.Add( r.GetInsertSql(config));
+                //if (r.RowState == DataRowState.Added)
+                //{
+                //    foreach (string columnName in columnNameList)
+                //    {
+                //        valueList.Add(r[columnName].EncodeAsSqlVariable());
+                //    }
+
+                //    sql = string.Format("INSERT INTO {0}.{1} ({2}) ", schemaName, targetTableName, string.Join(", ", columnNameList));
+                //    if (tabulate) sql += Environment.NewLine;
+                //    sql += string.Format("VALUES ({0});", string.Join(", ", valueList));
+                //    insertSqlStatements.Add(sql);
+                //    valueList.Clear();
+                //}
             }
             return insertSqlStatements;
         }
@@ -254,45 +229,26 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="overrideTableName"></param>
         /// <param name="tabulate"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetDeleteSqlByRowState(this DataTable dt, string schemaName, string overrideTableName = "", bool tabulate = true)
+        public static IEnumerable<string> GetDeleteSqlByRowState(this DataTable dt, SqlGeneratorConfig config)
         {
             if (dt.PrimaryKey.Count() == 0) throw new MissingPrimaryKeyException(dt.TableName + " does not have a Primary Key defined");
 
             DataTable dtDeleted = dt.GetChanges(DataRowState.Deleted);
             if (dtDeleted == null) return new List<string>();
 
-            string sql = "";
+
+
 
             List<string> deleteSqlStatements = new List<string>();
-            IList<string> pkColumnNames = dt.GetPrimaryKeyColumnNames().ToList();
-            List<string> valueList = new List<string>();
-
-            string targetTableName = dt.TableName;
-
-            if (overrideTableName != "")
-            {
-                targetTableName = overrideTableName;
-            }
-
             foreach (DataRow r in dtDeleted.Rows)
             {
-                foreach (string columnName in pkColumnNames)
-                {
-
-                    valueList.Add(r[columnName, DataRowVersion.Original].EncodeAsSqlVariable());
-                }
-
-                sql = string.Format("DELETE FROM {0}.{1} \n", schemaName, targetTableName);
-
-                string whereClause = GetWhereClause(targetTableName, pkColumnNames, valueList);
-                sql += whereClause + ";";
-
+                string sql = r.GetDeleteSql(config);
                 deleteSqlStatements.Add(sql);
-                valueList.Clear();
-
             }
             return deleteSqlStatements;
         }
+
+        
 
         /// <summary>
         /// Returns sql statement by row state to udpate row in a table
@@ -303,101 +259,21 @@ namespace SSAx.PrimitiveExtensions
         /// <param name="tabulate"></param>
         /// <returns></returns>
 
-        public static IEnumerable<string> GetUpdateSqlByRowState(this DataTable dt, string schemaName, string overrideTableName = "", bool tabulate = true)
+        public static IEnumerable<string> GetUpdateSqlByRowState(this DataTable dt, SqlGeneratorConfig config)
         {
             if (dt.PrimaryKey.Count() == 0) throw new MissingPrimaryKeyException(dt.TableName + " does not have a Primary Key defined");
-
+            
             DataTable dtModified = dt.GetChanges(DataRowState.Modified);
             if (dtModified == null) return new List<string>();
 
-            string sql = "";
-
             List<string> updateSqlStatements = new List<string>();
-
-            List<string> pkColumnNames = dt.GetPrimaryKeyColumnNames().ToList();
-            List<string> nonIdentityColumnNames = dt.GetNonIdentityColumnNames().ToList();
-
-            List<string> pkValueList = new List<string>();
-            List<string> valueList = new List<string>();
-
-            string targetTableName = dt.TableName;
-
-            if (overrideTableName != "")
-            {
-                targetTableName = overrideTableName;
-            }
-
             foreach (DataRow r in dtModified.Rows)
             {
-                foreach (string columnName in pkColumnNames)
-                {
-                    pkValueList.Add(r[columnName, DataRowVersion.Original].EncodeAsSqlVariable());
-                }
-
-
-                foreach (string columnName in nonIdentityColumnNames)
-                {
-                    
-                    valueList.Add(r[columnName].EncodeAsSqlVariable());
-                }
-
-
-
-                sql = string.Format("UPDATE {0}.{1} \n", schemaName, targetTableName);
-                sql += GetSetClause(targetTableName, nonIdentityColumnNames, valueList);
-                sql += GetWhereClause(targetTableName, pkColumnNames, pkValueList);
-                sql += ";";
-
-                updateSqlStatements.Add(sql);
-                pkValueList.Clear();
-                valueList.Clear();
-
+                updateSqlStatements.Add(r.GetUpdateSql(config));
             }
             return updateSqlStatements;
         }
 
-        /// <summary>
-        /// Returns a string of where clause for a sql statement
-        /// </summary>
-        /// <param name="targetTableName"></param>
-        /// <param name="pkColumnNames"></param>
-        /// <param name="sqlEncodedValueList"></param>
-        /// <param name="tabulate"></param>
-        /// <returns></returns>
-        private static string GetWhereClause(string targetTableName, IList<string> pkColumnNames, IList<string> sqlEncodedValueList, bool tabulate = true)
-        {
-            string whereClause = "WHERE ";
-
-            for (int i = 0; i < pkColumnNames.Count; i++)
-            {
-                if (tabulate) whereClause += "\n\t";
-                whereClause += string.Format("{0}.{1} = {2} AND ", targetTableName, pkColumnNames[i], sqlEncodedValueList[i]);
-            }
-            whereClause = whereClause.RemoveLastAndAfter(" AND ");
-            return whereClause;
-        }
-
-        /// <summary>
-        /// Returns a string of set clause for a sql statement
-        /// </summary>
-        /// <param name="targetTableName"></param>
-        /// <param name="nonKeycolumnNames"></param>
-        /// <param name="sqlEncodedValueList"></param>
-        /// <param name="tabulate"></param>
-        /// <returns></returns>
-        private static string GetSetClause(string targetTableName, List<string> nonKeycolumnNames, List<string> sqlEncodedValueList, bool tabulate = true)
-        {
-            string setClause = "SET ";
-
-            for (int i = 0; i < nonKeycolumnNames.Count; i++)
-            {
-                setClause += string.Format("{0}.{1} = {2}, ", targetTableName, nonKeycolumnNames[i], sqlEncodedValueList[i]);
-                if (tabulate) setClause += "\n\t";
-            }
-            setClause = setClause.RemoveLastAndAfter(", ");
-            if (tabulate) setClause += Environment.NewLine;
-            return setClause;
-        }
 
         /// <summary>
         /// Returns a string of HTML code to display a Table on a web page
@@ -562,58 +438,125 @@ namespace SSAx.PrimitiveExtensions
         }
 
 
+
+
+
         /// <summary>
-        /// Returns a list of Common non key column names from a list of tables
+        /// Identifies and returns all the non key column names that are shared by all the datatables in the collection. Other properties of the columns are not compared and are ignored. 
         /// </summary>
         /// <param name="dts"></param>
-        /// <param name="GetExcludedColumns"></param>
+        /// <param name="ignoreCase"></param>
         /// <returns></returns>
-
-        public static IEnumerable<string> CommonNonKeyColumnNameList(this IList<DataTable> dts, bool GetExcludedColumns = false)
+        public static IEnumerable<string> GetColumnNames_NonPrimaryKey_Shared(this IEnumerable<DataTable> dts)
         {
-            Dictionary<string, int> columns = new Dictionary<string, int>();
-            List<string> excludedColumns = new List<string>();
-            List<string> commonColumns = new List<string>();
-            columns.Clear();
-            excludedColumns.Clear();
-            commonColumns.Clear();
+            return GetColumns(dts, false, true);
+        }
+
+
+        /// <summary>
+        /// Identifies and returns all the key column names that are shared by all the datatables in the collection. Other properties of the columns are not compared and are ignored. 
+        /// </summary>
+        /// <param name="dts"></param>
+        /// <param name="caseSensitive"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> GetColumnNames_PrimaryKey_Shared(this IEnumerable<DataTable> dts)
+        {
+            return GetColumns(dts, true, true);
+        }
+
+
+        /// <summary>
+        /// Identifies and returns all the non key column names that are shared by all the datatables in the collection. Other properties of the columns are not compared and are ignored. 
+        /// </summary>
+        /// <param name="dts"></param>
+        /// <param name="ignoreCase"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> GetColumnNames_PrimaryKey_NotShared(this IEnumerable<DataTable> dts)
+        {
+            return GetColumns(dts, true, false);
+        }
+
+
+        /// <summary>
+        /// Identifies and returns all the key column names that are shared by all the datatables in the collection. Other properties of the columns are not compared and are ignored. 
+        /// </summary>
+        /// <param name="dts"></param>
+        /// <param name="caseSensitive"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> GetColumnNames_NonPrimaryKey_NotShared(this IEnumerable<DataTable> dts)
+        {
+            return GetColumns(dts, false, false);
+        }
+
+
+        private static IEnumerable<string> GetColumns(IEnumerable<DataTable> dts, bool getKey = true, bool getShared = false)
+        {
+            Dictionary<string, int> keyColumns = new Dictionary<string, int>();
+            Dictionary<string, int> nonKeyColumns = new Dictionary<string, int>();
+            List<string> notSharedColumns = new List<string>();
+            List<string> sharedColumns = new List<string>();
+
+
             foreach (DataTable dt in dts)
             {
                 foreach (DataColumn c in dt.Columns)
                 {
-                    if (c.IsAPrimaryKeyColumn(dt) == false)
+                    string columnName = c.ColumnName;
+                    if (c.IsAPrimaryKeyColumn(dt))
                     {
-                        if (columns.ContainsKey(c.ColumnName))
+                        if (keyColumns.ContainsKey(columnName))
                         {
-                            columns[c.ColumnName] = columns[c.ColumnName] + 1;
+                            keyColumns[columnName] = keyColumns[columnName] + 1;
                         }
                         else
                         {
-                            columns.Add(c.ColumnName, 1);
+                            keyColumns.Add(columnName, 1);
+                        }
+                    }
+                    else
+                    {
+                        if (nonKeyColumns.ContainsKey(columnName))
+                        {
+                            nonKeyColumns[columnName] = nonKeyColumns[columnName] + 1;
+                        }
+                        else
+                        {
+                            nonKeyColumns.Add(columnName, 1);
                         }
                     }
                 }
             }
 
-            foreach (KeyValuePair<string, int> column in columns)
+            Dictionary<string, int> colKvp = new Dictionary<string, int>();
+            if (getKey)
             {
-                if (column.Value < dts.Count)
-                {
-                    excludedColumns.Add(column.Key);
-                }
-                else
-                {
-                    commonColumns.Add(column.Key);
-                }
-            }
-
-            if (GetExcludedColumns)
-            {
-                return excludedColumns;
+                colKvp = keyColumns;
             }
             else
             {
-                return commonColumns;
+                colKvp = nonKeyColumns;
+            }
+
+
+            foreach (KeyValuePair<string, int> column in colKvp)
+            {
+                if (column.Value < dts.Count())
+                {
+                    notSharedColumns.Add(column.Key);
+                }
+                else
+                {
+                    sharedColumns.Add(column.Key);
+                }
+            }
+
+            if (getShared)
+            {
+                return sharedColumns;
+            }
+            else
+            {
+                return notSharedColumns;
             }
         }
 
@@ -732,7 +675,7 @@ namespace SSAx.PrimitiveExtensions
         {
             if (!dt.Columns.Contains(columnName))
             {
-                    return dt.Columns.Add(columnName, t, expression);
+                return dt.Columns.Add(columnName, t, expression);
             }
             else
             {
@@ -894,11 +837,11 @@ namespace SSAx.PrimitiveExtensions
         //public static int GetBytes(this DataTable dt, int pageNum, int pageSize)
 
 
-            /// <summary>
-            /// Returns storage bytes value of a data table
-            /// </summary>
-            /// <param name="dt"></param>
-            /// <returns></returns>
+        /// <summary>
+        /// Returns storage bytes value of a data table
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         public static int GetBytes(this DataTable dt)
         {
             int numberOfBytes = 0;

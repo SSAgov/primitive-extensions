@@ -31,7 +31,17 @@ namespace SSAx.PrimitiveExtensions
         /// <returns>Return string in custom string</returns>
         public static string Wrap(this string s, string wrapper)
         {
-            return Wrap(wrapper, wrapper);
+            return s.Wrap(wrapper, wrapper);
+        }
+
+        public static string Wrap(this string s, char leftWrapper, char rightWrapper)
+        {
+            return leftWrapper + s + rightWrapper;
+        }
+
+        public static string Wrap(this string s, char wrapper)
+        {
+            return s.Wrap(wrapper, wrapper);
         }
 
         ///// <summary>
