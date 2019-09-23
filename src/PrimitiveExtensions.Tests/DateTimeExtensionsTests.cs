@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SSAx.PrimitiveExtensions.Tests
+namespace PrimitiveExtensions.Tests
 {
     public class DateTimeExtensionsTests
     {

@@ -2,7 +2,7 @@
 using System.Data;
 using System.Collections.Generic;
 
-namespace SSAx.PrimitiveExtensions.Tests
+namespace PrimitiveExtensions.Tests
 {
     public class DataRowExtensionTests
 

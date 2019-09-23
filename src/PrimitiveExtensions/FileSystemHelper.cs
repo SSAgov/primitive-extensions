@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace SSAx.PrimitiveExtensions
+namespace PrimitiveExtensions
 {
     /// <summary>
     /// Provides static methods that aid in performing file system related operations.

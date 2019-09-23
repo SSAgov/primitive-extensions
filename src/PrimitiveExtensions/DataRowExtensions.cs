@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace SSAx.PrimitiveExtensions
+namespace PrimitiveExtensions
 {
     public static class DataRowExtensions
     {

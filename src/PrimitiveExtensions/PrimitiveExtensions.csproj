@@ -2,20 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>SSAx.PrimitiveExtensions</PackageId>
+    <PackageId>PrimitiveExtensions</PackageId>
     <Authors>Joseph Amalfitano</Authors>
     <Company>Social Security Administration</Company>
-    <Product>SSA Primitive Extensions</Product>
+    <Product>Primitive Extensions</Product>
     <Description>A .NET Standard 2.0 library of extension methods for primitive types such as string, DateTime, boolean, el al. Most of these extensions just serve as helper methods that either make code easier to read or make it more efficient to do common tasks.</Description>
-    <PackageLicenseUrl>https://github.com/SSAgov/ssax-primitive-extensions/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/SSAgov/primitive-extensions/blob/master/LICENSE</PackageLicenseUrl>
     <NeutralLanguage>en</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl></PackageProjectUrl>
-    <RepositoryUrl>https://github.com/SSAgov/ssax-primitive-extensions</RepositoryUrl>
+    <RepositoryUrl>https://github.com/SSAgov/primitive-extensions</RepositoryUrl>
     <PackageTags>extensions;primitive-types</PackageTags>
     <RepositoryType />
-    <Version>1.0.5</Version>
+    <Version>1.0.7</Version>
+    <PackageReleaseNotes>*removed SSAx. namespace prefix from files and project</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 
-namespace SSAx.PrimitiveExtensions
+namespace PrimitiveExtensions
 {
 
     public static class ArrayExtensions

@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 
-namespace SSAx.PrimitiveExtensions
+namespace PrimitiveExtensions
 {
     /// <summary>
     /// This is a static class which extends the string object/type

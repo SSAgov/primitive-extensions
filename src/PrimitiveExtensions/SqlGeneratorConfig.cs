@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 
-namespace SSAx.PrimitiveExtensions
+namespace PrimitiveExtensions
 {
     public class SqlGeneratorConfig
     {

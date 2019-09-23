@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace SSAx.PrimitiveExtensions
+namespace PrimitiveExtensions
 {
     /// <summary>
     /// Provides static methods that aid in performing database related operations.

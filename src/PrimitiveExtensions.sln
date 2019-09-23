@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSAx.PrimitiveExtensions", "SSAx.PrimitiveExtensions\SSAx.PrimitiveExtensions.csproj", "{18081992-AA4F-4C56-90F8-15860F90DBAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrimitiveExtensions", "PrimitiveExtensions\PrimitiveExtensions.csproj", "{18081992-AA4F-4C56-90F8-15860F90DBAB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSAx.PrimitiveExtensions.Tests", "SSAx.PrimitiveExtensions.Tests\SSAx.PrimitiveExtensions.Tests.csproj", "{75F1C76B-6ACF-4CF2-8C8D-DE5E4765CF16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrimitiveExtensions.Tests", "PrimitiveExtensions.Tests\PrimitiveExtensions.Tests.csproj", "{75F1C76B-6ACF-4CF2-8C8D-DE5E4765CF16}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{388519AB-4581-416E-8ED1-6EB04FDF8A94}"
 	ProjectSection(SolutionItems) = preProject

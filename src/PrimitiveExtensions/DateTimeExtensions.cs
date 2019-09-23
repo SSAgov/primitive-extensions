@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace SSAx.PrimitiveExtensions
+namespace PrimitiveExtensions
 {
     public static class DateTimeExtensions
     {
