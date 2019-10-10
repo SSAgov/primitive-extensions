@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/SSAgov/primitive-extensions</RepositoryUrl>
     <PackageTags>extensions;primitive-types</PackageTags>
     <RepositoryType />
-    <Version>1.0.7</Version>
-    <PackageReleaseNotes>*removed SSAx. namespace prefix from files and project</PackageReleaseNotes>
+    <Version>1.0.8</Version>
+    <PackageReleaseNotes>Refactored ToTitlecase</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

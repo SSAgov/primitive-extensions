@@ -569,6 +569,27 @@ namespace PrimitiveExtensions.Tests
             string expectedResult = "Al Bundy";
             Assert.Equal(expectedResult, result);
         }
+
+
+        [Fact]
+        public void ToTitleCase_ALL_CAPS_ExpectStringWithFirstletterCap()
+        {
+            string s = "AL BUNDY";
+            string result = s.ToTitleCase();
+            string expectedResult = "Al Bundy";
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void ToTitleCase_all_lower_ExpectStringWithFirstletterCap()
+        {
+            string s = "al bundy";
+            string result = s.ToTitleCase();
+            string expectedResult = "Al Bundy";
+            Assert.Equal(expectedResult, result);
+        }
+
+
         //Right
         [Fact]
         public void Right_GivenString_ExpectStringRightWord()

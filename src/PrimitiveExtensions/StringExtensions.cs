@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using System.Threading;
 
 namespace PrimitiveExtensions
 {
@@ -815,24 +816,7 @@ namespace PrimitiveExtensions
         /// <returns>String</returns>
         public static string ToTitleCase(this string s)
         {
-            char[] chars = s.ToCharArray();
-            StringBuilder sb = new StringBuilder();
-
-            bool capitalizeNextLetter = true;
-            foreach (char c in chars)
-            {
-                if (capitalizeNextLetter)
-                {
-                    sb.Append(c.ToString().ToUpper());
-                }
-                else
-                {
-                    sb.Append(c.ToString().ToLower());
-                }
-                capitalizeNextLetter = char.IsWhiteSpace(c);
-            }
-            return sb.ToString();
-
+            return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(s.ToLower());
         }
 
  
