@@ -568,6 +568,21 @@ namespace PrimitiveExtensions
             }
             return s;
         }
+        /// <summary>
+        /// Remove charachters from a string after giving a text (parameter) within the string
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="text"></param>
+        /// <returns>Sudstring of  input string</returns>
+        public static string RemoveFirstAndBefore(this string s, string text)
+        {
+            if (s.Contains(text))
+            {
+                int characterIndex = s.IndexOf(text) + text.Length;
+                s = s.RemoveBefore(characterIndex);
+            }
+            return s;
+        }
 
         /// <summary>
         /// Remove characters from a string after giving a length

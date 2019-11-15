@@ -691,6 +691,23 @@ namespace PrimitiveExtensions.Tests
             string result = s.RemoveFirstAndAfter("Al");
             string expectedResult = "Hello ";
             Assert.Equal(expectedResult, result);
+        }   
+        //RemoveFirstAndAfter
+        [Fact]
+        public void RemoveFirstAndAfter_1_char_delim()
+        {
+            string s = "Hello1There";
+            string result = s.RemoveFirstAndAfter("1");
+            string expectedResult = "Hello";
+            Assert.Equal(expectedResult, result);
+        }       //RemoveFirstAndAfter
+        [Fact]
+        public void RemoveFirstAndAfter_3_char_delim()
+        {
+            string s = "Hello132There";
+            string result = s.RemoveFirstAndAfter("132");
+            string expectedResult = "Hello";
+            Assert.Equal(expectedResult, result);
         }
 
         //RemoveLastAndAfter
@@ -702,6 +719,23 @@ namespace PrimitiveExtensions.Tests
             string expectedResult = "Hello Al, and ";
             Assert.Equal(expectedResult, result);
         }
+        [Fact]
+        public void RemoveFirstAndBefore_1_char_delim()
+        {
+            string s = @"ABC\DEF";
+            string result = s.RemoveFirstAndBefore(@"\");
+            string expected = "DEF";
+            Assert.Equal(expected, result);
+        }
+        [Fact]
+        public void RemoveFirstAndBefore_3_char_delim()
+        {
+            string s = @"ABC...DEF";
+            string result = s.RemoveFirstAndBefore(@"...");
+            string expected = "DEF";
+            Assert.Equal(expected, result);
+        }
+        
         //RemoveBeforeFirst
         [Fact]
         public void RemoveBeforeFirst_GivenAl_ExpectStingBeforeFirstAl()
