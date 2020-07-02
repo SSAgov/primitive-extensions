@@ -137,7 +137,6 @@ namespace PrimitiveExtensions.Tests
         {
             object o = null;
             int i = o.NzInt();
-            i = Convert.ToInt32(null);
             Assert.Equal(0, i);
         }
 

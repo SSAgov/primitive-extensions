@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/SSAgov/primitive-extensions</RepositoryUrl>
     <PackageTags>extensions;primitive-types</PackageTags>
     <RepositoryType />
-    <Version>1.0.8</Version>
-    <PackageReleaseNotes>Refactored ToTitlecase</PackageReleaseNotes>
+    <Version>1.0.10</Version>
+    <PackageReleaseNotes>added data reader extensions</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>
