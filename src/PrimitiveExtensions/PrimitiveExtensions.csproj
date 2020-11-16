@@ -15,8 +15,10 @@
     <RepositoryUrl>https://github.com/SSAgov/primitive-extensions</RepositoryUrl>
     <PackageTags>extensions;primitive-types</PackageTags>
     <RepositoryType />
-    <Version>1.0.10</Version>
-    <PackageReleaseNotes>added data reader extensions</PackageReleaseNotes>
+    <Version>1.0.11</Version>
+    <PackageReleaseNotes>added data reader extensions; timespan</PackageReleaseNotes>
+    <AssemblyVersion>1.0.11.0</AssemblyVersion>
+    <FileVersion>1.0.11.0</FileVersion>
   </PropertyGroup>
 
 </Project>

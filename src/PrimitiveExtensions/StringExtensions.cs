@@ -454,7 +454,7 @@ namespace PrimitiveExtensions
             try
             {
                 MailAddress m = new MailAddress(s);
-                return true;
+                return m.Host.Contains(".");
             }
             catch (Exception)
             {

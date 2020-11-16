@@ -17,5 +17,11 @@ namespace PrimitiveExtensions
             int columnIndex = reader.GetOrdinal(columnName);
             return reader.IsDBNull(columnIndex) ? (DateTime?)null : (DateTime?)reader.GetDateTime(columnIndex);
         }
+
+        public static TimeSpan? GetNullableTimeSpan(this IDataReader reader, string columnName)
+        {
+            int columnIndex = reader.GetOrdinal(columnName);
+            return reader.IsDBNull(columnIndex) ? (TimeSpan?)null : (TimeSpan?)reader[columnIndex];
+        }
     }
 }
