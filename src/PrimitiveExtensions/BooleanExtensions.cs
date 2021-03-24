@@ -67,11 +67,19 @@ namespace PrimitiveExtensions
             {
                 return null;
             }
-            return s.ToBool();
+            bool? result = null;
+            try
+            {
+                result = s.ToBool();
+            }
+            catch (Exception)
+            {
+            }
+            return result;
         }
-        
+
         /// <summary>
-        /// Converts a string to a boolean. Zero returns false, any non-zero returns true.
+        /// Converts a string to a boolean. Zero returns false, any non-zero returns true. String values can be case insensitive values of "Y", "1", "-1", "TRUE", "YES", "T", "POSITIVE", "N", "0", "FALSE", "F", "NO", "NEGATIVE".
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -117,7 +125,7 @@ namespace PrimitiveExtensions
                 }
             }
 
-            throw new Exception("No viable match");
+            throw new Exception($"Can't determine if {s} should be true or false");
         }
     }
 }

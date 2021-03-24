@@ -41,7 +41,13 @@ namespace PrimitiveExtensions.Tests
             bool? result = s.ToBoolNullable();
             Assert.Null(result);
         }
-
+        [Fact]
+        public void ToBoolNullable_GivenM_ExpectNull()
+        {
+            string s = "M";
+            bool? result = s.ToBoolNullable();
+            Assert.Null(result);
+        }
 
         [Fact]
         public void ToBoolNullable_GivenEmptyString_ExpectNull()
